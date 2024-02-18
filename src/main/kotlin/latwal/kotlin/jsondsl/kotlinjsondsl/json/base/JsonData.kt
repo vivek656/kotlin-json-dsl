@@ -175,6 +175,8 @@ class ArrayJsonData : JsonData(){
 
     }
 
+    fun size() = arrayList.size
+
 }
 
 private fun StringBuilder.levelIdent(level: Int): StringBuilder {
