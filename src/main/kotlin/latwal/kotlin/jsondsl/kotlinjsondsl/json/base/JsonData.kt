@@ -1,4 +1,4 @@
-package latwal.kotlin.jsondsl.kotlinjsondsl.json
+package latwal.kotlin.jsondsl.kotlinjsondsl.json.base
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -11,9 +11,9 @@ open class JsonData {
     companion object {
         val serializer = jacksonObjectMapper()
     }
-    private val properties = mutableMapOf<String, JsonData>()
+    protected open val properties = mutableMapOf<String, JsonData>()
 
-    fun set(key: String, jsonData: JsonData): JsonData {
+    open fun set(key: String, jsonData: JsonData): JsonData {
         properties[key] = jsonData
         return properties[key]!!
     }
@@ -24,11 +24,11 @@ open class JsonData {
         return properties[key]!!
     }
 
-    fun get(key : String) : JsonData? {
+    open fun get(key : String) : JsonData? {
         return properties[key]
     }
 
-    protected fun resolve(any: Any) : JsonData{
+    protected fun resolve(any: Any) : JsonData {
         return  if(any is JsonData) any
         else if (PrimitiveDataNode.objectIsPrimitive(any))  PrimitiveDataNode(any)
         else if (any is Collection<*>) ArrayJsonData.fromCollection(any)
@@ -63,7 +63,12 @@ open class JsonData {
         sb.levelIdent(level).append("}")
         return sb.toString()
     }
+
+    open fun asJsonNode() : JsonNode{
+        return serializer.convertValue(properties.mapValues { it.value.asJsonNode() }, JsonNode::class.java)
+    }
 }
+
 
 class LeafObjectDataNode(nodeValue: Any) : JsonData() {
     companion object {
@@ -78,6 +83,10 @@ class LeafObjectDataNode(nodeValue: Any) : JsonData() {
     override fun toString(): String = serializer.writeValueAsString(this.nodeValueJson)
 
     override fun toString(level: Int) = toString()
+
+    override fun asJsonNode() : JsonNode{
+        return nodeValueJson
+    }
 }
 
 class PrimitiveDataNode(private val any: Any) : JsonData() {
@@ -88,6 +97,7 @@ class PrimitiveDataNode(private val any: Any) : JsonData() {
     }
 
     companion object {
+        val commonSerializer = jacksonObjectMapper()
         fun objectIsPrimitive(any: Any): Boolean {
             return any::class.javaPrimitiveType != null
         }
@@ -95,13 +105,17 @@ class PrimitiveDataNode(private val any: Any) : JsonData() {
 
     override fun toString(): String = serializer.writeValueAsString(any)
     override fun toString(level: Int) = toString()
+
+    override fun asJsonNode() : JsonNode{
+        return commonSerializer.convertValue(any , JsonNode::class.java)
+    }
 }
 
 class ArrayJsonData : JsonData(){
     private val arrayList = ArrayList<JsonData>()
 
     companion object {
-       // val serializationMapper = jacksonObjectMapper()
+        val serializationMapper = jacksonObjectMapper()
         fun fromCollection(collections: Collection<*>): ArrayJsonData {
             val array = ArrayJsonData()
             array.addAll(collections)
@@ -152,6 +166,13 @@ class ArrayJsonData : JsonData(){
         sb.levelIdent(level)
         sb.append("]")
         return sb.toString()
+    }
+
+    override fun asJsonNode() : JsonNode{
+        return serializationMapper.createArrayNode().addAll(
+                arrayList.map { it.asJsonNode() }
+        )
+
     }
 
 }
