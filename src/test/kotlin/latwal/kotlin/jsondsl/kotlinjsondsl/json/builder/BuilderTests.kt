@@ -8,7 +8,7 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun `testing building a simple json`() {
-        json {
+        jsonNode {
             "participants" to arrayOf(
                     {
                         "name" to {
@@ -38,7 +38,7 @@ class BuilderTests : AbstractJsonDslTests() {
                     }
                 }
             }
-            "titles" to array {
+            "titles" to arrayNode {
                 plus {
                     "type" to "leasehold"
                     "rent" to 100
@@ -47,7 +47,7 @@ class BuilderTests : AbstractJsonDslTests() {
                     "type" to "one"
                 }
             }
-            "randomInts" to array {
+            "randomInts" to arrayNode {
                 this + 1
                 this + 2
                 this + 3
@@ -62,7 +62,7 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun `use --json-- builder to build json structure`(){
-        json {
+        jsonNode {
             "primitiveField" to 7
         } asserting {
             containsField("primitiveField")
@@ -71,7 +71,7 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun `use --to-- construct to set field as an object, array or primitive value`(){
-        json {
+        jsonNode {
             "intField" to 7
             "stringField" to "seven"
             "arrayField" to arrayOf(
@@ -91,7 +91,7 @@ class BuilderTests : AbstractJsonDslTests() {
     @Test
     fun `simply set field value to data class using --to-- construct`(){
 
-        json {
+        jsonNode {
             "leafObject" to TestDataClass(fieldOne = "fieldOneValue")
         } asserting {
             containsObjectAt("leafObject")
@@ -100,7 +100,7 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun `use --array-- to create an array, use --plus-- inside to add a json object`(){
-        array {
+        arrayNode {
             plus {
                 "fieldOne" to "one"
             }
