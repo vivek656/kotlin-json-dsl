@@ -1,9 +1,10 @@
-package latwal.kotlin.jsondsl.kotlinjsondsl.json.base
+package latwal.kotlin.jsondsl.kotlinjsondsl.json.archived
 
 import latwal.kotlin.jsondsl.kotlinjsondsl.json.common.AbstractJsonDslTests
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
+@SuppressWarnings("deprecated")
 class JsonDataTests : AbstractJsonDslTests() {
 
     companion object {
@@ -12,6 +13,33 @@ class JsonDataTests : AbstractJsonDslTests() {
     private fun generateSimpleJsonData(): JsonData {
         val jsonData = JsonData()
         return jsonData.set("fieldOne" , "one")
+    }
+
+    class BuilderAssertionContext(private val jsonData: JsonData) {
+
+        private val topLevelJson = jsonData.asJsonNode()
+
+        fun isAnArray() = topLevelJson.isArray
+        fun isAnObject() = topLevelJson.isObject
+        infix fun containsObjectAt(childPointer : String) {
+            val pointer = "/${childPointer.trimStart('/')}"
+            topLevelJson.at(pointer).isObject
+        }
+
+        infix fun containsField(field : String){
+            assert(jsonData.get(field)!=null)
+        }
+
+        infix fun containsArrayAt(childPointer : String) {
+            val pointer = "/${childPointer.trimStart('/')}"
+            topLevelJson.at(pointer).isArray
+        }
+
+    }
+
+    private infix fun JsonData.asserting(init : BuilderAssertionContext.() -> Unit): JsonData {
+        BuilderAssertionContext(this).init()
+        return this
     }
 
     @Test

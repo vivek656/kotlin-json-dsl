@@ -2,7 +2,6 @@ package latwal.kotlin.jsondsl.kotlinjsondsl.json.base
 
 import latwal.kotlin.jsondsl.kotlinjsondsl.json.common.AbstractJsonDslTests
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class JsonDataNodeWrapperTests : AbstractJsonDslTests() {
 
@@ -62,24 +61,17 @@ class JsonDataNodeWrapperTests : AbstractJsonDslTests() {
                 generateSimpleJsonData(),
                 generateSimpleJsonData()
         )
-        val array = ArrayJsonData.fromCollection(jsonDataCollection)
+        val array = JsonDataJsonArrayNodeWrapper.fromCollection(jsonDataCollection)
         array.add(generateSimpleJsonData())
         array.addAll(jsonDataCollection)
 
-        assert(array.asJsonNode().isArray)
-        assert(array.size() > jsonDataCollection.size)
+        assert(array.getArray().isArray)
+        assert(array.getArray().size() > jsonDataCollection.size)
 
         val stringifyData = array.toString()
         logInfo(TAG, stringifyData)
         assert(stringifyData.isNotBlank())
     }
 
-    @Test
-    fun `attempt to create a primitive data , with non primitive value result in exception`(){
-        val nonPrimitiveData = TestDataClass(fieldOne = "one")
-        assertThrows<IllegalArgumentException> {
-            PrimitiveDataNode(nonPrimitiveData)
-        }
-    }
 
 }

@@ -1,61 +1,9 @@
 package latwal.kotlin.jsondsl.kotlinjsondsl.json.builder
 
-import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.*
+import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonDataJsonArrayNodeWrapper
+import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonDataJsonNodeWrapper
+import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.TypedJsonData
 
-
-open class JsonObjectContext {
-    private val data = JsonData()
-
-    infix fun String.to(value: Any): JsonData {
-        data.set(this, value)
-        return data.get(this)!!
-    }
-
-    infix fun String.to(value: JsonData): JsonData {
-        return data.set(this, value)
-    }
-
-    infix fun String.to(init: JsonObjectContext.() -> Unit): JsonData {
-        return this to json(init)
-    }
-
-    infix fun String.to(inits: Array<JsonObjectContext.() -> Unit>): JsonData {
-        return this to ArrayJsonData.fromCollection(inits.map { json(it) })
-    }
-
-    open fun data() = data
-}
-
-class JsonArrayContext : JsonObjectContext() {
-    private val arrayJsonData = ArrayJsonData()
-
-    operator fun plus(jsonData: JsonData){
-        arrayJsonData.add(jsonData)
-    }
-
-    infix fun plus(init: JsonObjectContext.() -> Unit) {
-        plus(json(init))
-    }
-
-    operator fun plus(any: Any) {
-        arrayJsonData.add(any)
-    }
-
-    override fun data() = arrayJsonData
-}
-
-
-fun json(init: JsonObjectContext.() -> Unit): JsonData {
-    val jsonContext = JsonObjectContext()
-    jsonContext.init()
-    return jsonContext.data()
-}
-
-fun array(init: JsonArrayContext.() -> Unit): ArrayJsonData {
-    val jsonContext = JsonArrayContext()
-    jsonContext.init()
-    return jsonContext.data()
-}
 
 open class JsonObjectNodeContext(
         private val data: JsonDataJsonNodeWrapper = JsonDataJsonNodeWrapper.createInitialObjectNode()
@@ -66,11 +14,11 @@ open class JsonObjectNodeContext(
     }
 
     infix fun String.to(init: JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
-        return this to jsonNode(init)
+        return this to json(init)
     }
 
     infix fun String.to(inits: Array<JsonObjectNodeContext.() -> Unit>): JsonDataJsonNodeWrapper {
-        return this to JsonDataJsonArrayNodeWrapper.fromCollection(inits.map { jsonNode (it) })
+        return this to JsonDataJsonArrayNodeWrapper.fromCollection(inits.map { json(it) })
     }
 
     open fun data() = data
@@ -84,7 +32,7 @@ class JsonArrayNodeContext : JsonObjectNodeContext() {
     }
 
     infix fun plus(init: JsonObjectNodeContext.() -> Unit) {
-        plus(jsonNode(init))
+        plus(json(init))
     }
 
     operator fun plus(any: Any) {
@@ -95,22 +43,30 @@ class JsonArrayNodeContext : JsonObjectNodeContext() {
 }
 
 
-fun jsonNode(init: JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
+fun json(init: JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
     val jsonContext = JsonObjectNodeContext()
     jsonContext.init()
     return jsonContext.data()
 }
 
-fun arrayNode(init: JsonArrayNodeContext.() -> Unit): JsonDataJsonArrayNodeWrapper {
+fun array(init: JsonArrayNodeContext.() -> Unit): JsonDataJsonArrayNodeWrapper {
     val jsonContext = JsonArrayNodeContext()
     jsonContext.init()
     return jsonContext.data()
 }
 
-inline fun <reified T : Any> typedJsonNode(init: JsonObjectNodeContext.() -> Unit): TypedJsonData<T> {
-    val typedJsonNode = TypedJsonData(T::class)
-    val jsonContext = JsonObjectNodeContext(typedJsonNode)
+/**
+ * Function give typed Json, from the provided jsonData ,
+ * the jsonData, should contain all the fields required to construct the typed jsonData.else will throw error
+ */
+inline fun <reified T : Any> typedJson(init: JsonObjectNodeContext.() -> Unit): TypedJsonData<T> {
+    val jsonContext = JsonObjectNodeContext()
     jsonContext.init()
-    return typedJsonNode
+    return TypedJsonData.from(T::class,jsonContext.data())
+}
+
+inline fun <reified T : Any> typedJsonData(init: () -> T): TypedJsonData<out T> {
+    val data = init()
+    return TypedJsonData.from(data)
 }
 

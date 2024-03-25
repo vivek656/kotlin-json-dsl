@@ -6,6 +6,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlin.reflect.KClass
 
+
+typealias JsonDataNode = JsonNode
+
+
 open class JsonDataJsonNodeWrapper(jsonNode: JsonNode = serializer.createObjectNode()) {
 
     companion object {
@@ -116,9 +120,41 @@ class JsonDataJsonArrayNodeWrapper(jsonNode: ArrayNode = serializer.createArrayN
 }
 
 
-class TypedJsonData<T : Any>(private val clazz: KClass<T>) : JsonDataJsonNodeWrapper() {
+class TypedJsonData<T : Any>(private val clazz: KClass<T> , objectAsJson : JsonDataNode) : JsonDataJsonNodeWrapper(objectAsJson) {
     companion object {
         private val serializer = jacksonObjectMapper()
+
+        fun <E : Any> from(data : E): TypedJsonData<out E> {
+            val json = serializer.convertValue(data, JsonDataNode::class.java)
+            val typedJson = TypedJsonData(clazz = data::class, objectAsJson = json)
+            return typedJson
+        }
+
+        fun <E : Any> from(clazz: KClass<E>, data : Map<String,Any>): TypedJsonData<E> {
+            val json = serializer.convertValue(data, JsonDataNode::class.java)
+            val typedJson = TypedJsonData(clazz,json)
+            return typedJson
+        }
+
+        fun <E : Any> from(clazz: KClass<E>, data : JsonDataJsonNodeWrapper): TypedJsonData<E> {
+            val json = serializer.convertValue(data.getValue(), JsonDataNode::class.java)
+            val typedJson = TypedJsonData(clazz,json)
+            return typedJson
+        }
+
+    }
+
+    init {
+        checkJson(jsonNode = objectAsJson)
+    }
+
+
+
+    private fun checkJson(jsonNode: JsonNode) {
+       kotlin.runCatching { serializer.convertValue(jsonNode,clazz.java) }
+                .onFailure {
+                    throw IllegalArgumentException("Typed jsonData, attached to type ${clazz.simpleName} cannot be constructed, from jsonData provided")
+                }
     }
 
     override fun set(key: String, any: Any): JsonDataJsonNodeWrapper {
@@ -130,7 +166,7 @@ class TypedJsonData<T : Any>(private val clazz: KClass<T>) : JsonDataJsonNodeWra
                     super.set(key, any)
                 }.onFailure {
                     currentValue?.let { super.set(key, currentValue) }
-                    throw IllegalArgumentException("Typed json, attached to type ${clazz.simpleName} cannot be constructed , after inserted the latest data,for key $key value $any")
+                    throw IllegalArgumentException("Typed jsonData, attached to type ${clazz.simpleName} cannot be constructed , after inserted the latest data,for key $key value $any")
                 }
         return get(key)!!
     }

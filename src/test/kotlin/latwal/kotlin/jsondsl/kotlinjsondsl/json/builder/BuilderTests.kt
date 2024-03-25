@@ -8,7 +8,7 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun `testing building a simple json`() {
-        jsonNode {
+        json {
             "participants" to arrayOf(
                     {
                         "name" to {
@@ -38,7 +38,7 @@ class BuilderTests : AbstractJsonDslTests() {
                     }
                 }
             }
-            "titles" to arrayNode {
+            "titles" to array {
                 plus {
                     "type" to "leasehold"
                     "rent" to 100
@@ -47,7 +47,7 @@ class BuilderTests : AbstractJsonDslTests() {
                     "type" to "one"
                 }
             }
-            "randomInts" to arrayNode {
+            "randomInts" to array {
                 this + 1
                 this + 2
                 this + 3
@@ -62,7 +62,7 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun `use --json-- builder to build json structure`(){
-        jsonNode {
+        json {
             "primitiveField" to 7
         } asserting {
             containsField("primitiveField")
@@ -71,7 +71,7 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun `use --to-- construct to set field as an object, array or primitive value`(){
-        jsonNode {
+        json {
             "intField" to 7
             "stringField" to "seven"
             "arrayField" to arrayOf(
@@ -91,7 +91,7 @@ class BuilderTests : AbstractJsonDslTests() {
     @Test
     fun `simply set field value to data class using --to-- construct`(){
 
-        jsonNode {
+        json {
             "leafObject" to TestDataClass(fieldOne = "fieldOneValue")
         } asserting {
             containsObjectAt("leafObject")
@@ -100,7 +100,7 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun `use --array-- to create an array, use --plus-- inside to add a json object`(){
-        arrayNode {
+        array {
             plus {
                 "fieldOne" to "one"
             }
@@ -109,6 +109,20 @@ class BuilderTests : AbstractJsonDslTests() {
             }
         } asserting {
             isAnArray()
+        }
+    }
+
+    @Test
+    fun `used --typedJson-- to create json , bounded or constrained by a kotlin type`(){
+        typedJson<TestDataClass2> {
+            "stringField" to "value1"
+            "integerField" to 7
+            "objectField" to typedJsonData {
+                TestDataClass(fieldOne = "value1")
+            }
+        } asserting {
+            isAnObject()
+            containsField("objectField")
         }
     }
 
