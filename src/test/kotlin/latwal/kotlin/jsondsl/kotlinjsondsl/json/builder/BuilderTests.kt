@@ -112,4 +112,18 @@ class BuilderTests : AbstractJsonDslTests() {
         }
     }
 
+    @Test
+    fun `used --typedJson-- to create json , bounded or constrained by a kotlin type`(){
+        typedJson<TestDataClass2> {
+            "stringField" to "value1"
+            "integerField" to 7
+            "objectField" to typedJsonData {
+                TestDataClass(fieldOne = "value1")
+            }
+        } asserting {
+            isAnObject()
+            containsField("objectField")
+        }
+    }
+
 }

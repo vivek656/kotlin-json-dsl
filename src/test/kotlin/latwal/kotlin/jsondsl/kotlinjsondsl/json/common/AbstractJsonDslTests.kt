@@ -1,6 +1,6 @@
 package latwal.kotlin.jsondsl.kotlinjsondsl.json.common
 
-import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonData
+import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonDataJsonNodeWrapper
 import org.slf4j.LoggerFactory
 
 abstract class AbstractJsonDslTests {
@@ -10,9 +10,21 @@ abstract class AbstractJsonDslTests {
         logger.info("${tag}: ${value}")
     }
 
-    class BuilderAssertionContext(private val jsonData: JsonData) {
 
-        private val topLevelJson = jsonData.asJsonNode()
+
+    protected data class TestDataClass(
+            val fieldOne: String
+    )
+
+    protected data class TestDataClass2(
+            val stringField: String,
+            val integerField : Int,
+            val objectField : TestDataClass
+    )
+
+    class NodeBuilderAssertionContext(private val jsonData: JsonDataJsonNodeWrapper) {
+
+        private val topLevelJson = jsonData.getValue()
 
         fun isAnArray() = topLevelJson.isArray
         fun isAnObject() = topLevelJson.isObject
@@ -32,13 +44,10 @@ abstract class AbstractJsonDslTests {
 
     }
 
-    protected infix fun JsonData.asserting(init : BuilderAssertionContext.() -> Unit): JsonData {
-        BuilderAssertionContext(this).init()
+    protected infix fun JsonDataJsonNodeWrapper.asserting(init : NodeBuilderAssertionContext.() -> Unit): JsonDataJsonNodeWrapper {
+        NodeBuilderAssertionContext(this).init()
         return this
     }
 
-    protected data class TestDataClass(
-            val fieldOne: String
-    )
 
 }

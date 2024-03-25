@@ -1,4 +1,4 @@
-package latwal.kotlin.jsondsl.kotlinjsondsl.json.base
+package latwal.kotlin.jsondsl.kotlinjsondsl.json.archived
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 typealias JsonDataNode = JsonNode
 
 
+@Deprecated("Do not use" , replaceWith = ReplaceWith("JsonDataJsonNodeWrapper"))
 open class JsonData {
     
     companion object {
@@ -75,11 +76,7 @@ class LeafObjectDataNode(nodeValue: Any) : JsonData() {
         val commonSerializer = jacksonObjectMapper()
     }
 
-    private val nodeValueJson: JsonDataNode
-
-    init {
-        nodeValueJson = commonSerializer.convertValue(nodeValue, JsonDataNode::class.java)
-    }
+    private val nodeValueJson: JsonDataNode = commonSerializer.convertValue(nodeValue, JsonDataNode::class.java)
     override fun toString(): String = serializer.writeValueAsString(this.nodeValueJson)
 
     override fun toString(level: Int) = toString()

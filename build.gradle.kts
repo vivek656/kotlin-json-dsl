@@ -19,11 +19,12 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-kotlin
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1")
+	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+	testImplementation("org.slf4j:slf4j-api:2.1.0-alpha1")
 
 }
 
