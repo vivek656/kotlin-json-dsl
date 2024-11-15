@@ -166,7 +166,7 @@ class TypedJsonData<T : Any>(private val clazz: KClass<T> , objectAsJson : JsonD
                     super.set(key, any)
                 }.onFailure {
                     currentValue?.let { super.set(key, currentValue) }
-                    throw IllegalArgumentException("Typed jsonData, attached to type ${clazz.simpleName} cannot be constructed , after inserted the latest data,for key $key value $any")
+                    throw IllegalArgumentException("Typed jsonData, attached to type ${clazz.simpleName} cannot be constructed , after inserting the latest data,for key $key value $any")
                 }
         return get(key)!!
     }

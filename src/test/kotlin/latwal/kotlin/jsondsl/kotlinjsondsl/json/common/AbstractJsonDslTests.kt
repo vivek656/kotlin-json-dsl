@@ -42,6 +42,8 @@ abstract class AbstractJsonDslTests {
             topLevelJson.at(pointer).isArray
         }
 
+        fun jsonData() = jsonData
+
     }
 
     protected infix fun JsonDataJsonNodeWrapper.asserting(init : NodeBuilderAssertionContext.() -> Unit): JsonDataJsonNodeWrapper {

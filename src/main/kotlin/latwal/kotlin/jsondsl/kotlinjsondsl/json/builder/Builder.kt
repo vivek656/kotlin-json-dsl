@@ -4,7 +4,11 @@ import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonDataJsonArrayNodeWrappe
 import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonDataJsonNodeWrapper
 import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.TypedJsonData
 
+@Target(AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.TYPE)
+@DslMarker
+annotation class JsonBuilderDsl
 
+@JsonBuilderDsl
 open class JsonObjectNodeContext(
         private val data: JsonDataJsonNodeWrapper = JsonDataJsonNodeWrapper.createInitialObjectNode()
 ) {
@@ -13,17 +17,18 @@ open class JsonObjectNodeContext(
         return data.get(this)!!
     }
 
-    infix fun String.to(init: JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
+    infix fun String.to(init: @JsonBuilderDsl JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
         return this to json(init)
     }
 
-    infix fun String.to(inits: Array<JsonObjectNodeContext.() -> Unit>): JsonDataJsonNodeWrapper {
+    infix fun String.to(inits: Array< @JsonBuilderDsl JsonObjectNodeContext.() -> Unit>): JsonDataJsonNodeWrapper {
         return this to JsonDataJsonArrayNodeWrapper.fromCollection(inits.map { json(it) })
     }
 
     open fun data() = data
 }
 
+@JsonBuilderDsl
 class JsonArrayNodeContext : JsonObjectNodeContext() {
     private val arrayJsonData = JsonDataJsonNodeWrapper.createInitialArrayNode()
 
@@ -31,25 +36,30 @@ class JsonArrayNodeContext : JsonObjectNodeContext() {
         arrayJsonData.add(jsonData)
     }
 
-    infix fun plus(init: JsonObjectNodeContext.() -> Unit) {
+    infix operator fun plus( @JsonBuilderDsl init: JsonObjectNodeContext.() -> Unit) {
         plus(json(init))
     }
 
-    operator fun plus(any: Any) {
+    infix operator fun plus(any: Any) {
         arrayJsonData.add(any)
+    }
+
+    operator fun Any.unaryPlus() {
+        plus(this)
     }
 
     override fun data() = arrayJsonData
 }
 
-
-fun json(init: JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
+@JsonBuilderDsl
+fun json( init: @JsonBuilderDsl  JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
     val jsonContext = JsonObjectNodeContext()
     jsonContext.init()
     return jsonContext.data()
 }
 
-fun array(init: JsonArrayNodeContext.() -> Unit): JsonDataJsonArrayNodeWrapper {
+@JsonBuilderDsl
+fun array( init: @JsonBuilderDsl  JsonArrayNodeContext.() -> Unit): JsonDataJsonArrayNodeWrapper {
     val jsonContext = JsonArrayNodeContext()
     jsonContext.init()
     return jsonContext.data()
