@@ -23,4 +23,6 @@ json {
 }
 ```
 
-see the repo's wiki and tests for more example
+see the repo's [wiki](https://github.com/vivek656/kotlin-json-dsl/wiki) and [tests](https://github.com/vivek656/kotlin-json-dsl/blob/main/src/test/kotlin/latwal/kotlin/jsondsl/kotlinjsondsl/json/builder/BuilderTests.kt) for more examples.
+
+
