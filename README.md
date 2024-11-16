@@ -19,7 +19,7 @@ in kotlin using Jackson
 with this library
 ```
 json {
-       "field" to "value"
+       "field" .. "value"
 }
 ```
 

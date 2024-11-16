@@ -12,21 +12,22 @@ annotation class JsonBuilderDsl
 open class JsonObjectNodeContext(
         private val data: JsonDataJsonNodeWrapper = JsonDataJsonNodeWrapper.createInitialObjectNode()
 ) {
-    infix fun String.to(value: Any): JsonDataJsonNodeWrapper {
+//    -------------------
+    infix operator fun String.rangeTo(value: Any): JsonDataJsonNodeWrapper {
         data.set(this, value)
         return data.get(this)!!
     }
 
-    infix fun String.to(init: @JsonBuilderDsl JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
-        return this to json(init)
+    infix fun String.rangeTo(init: @JsonBuilderDsl JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
+        return this .. json(init)
     }
 
-    infix fun String.to(inits: Array< @JsonBuilderDsl JsonObjectNodeContext.() -> Unit>): JsonDataJsonNodeWrapper {
-        return this to JsonDataJsonArrayNodeWrapper.fromCollection(inits.map { json(it) })
+    infix fun String.rangeTo(inits: Array< @JsonBuilderDsl JsonObjectNodeContext.() -> Unit>): JsonDataJsonNodeWrapper {
+        return this .. JsonDataJsonArrayNodeWrapper.fromCollection(inits.map { json(it) })
     }
 
-    infix fun <T> String.to(units: Array<T>): JsonDataJsonNodeWrapper where T : Any {
-        return this to JsonDataJsonArrayNodeWrapper.fromCollection(units.toList())
+    infix fun <T> String.rangeTo(units: Array<T>): JsonDataJsonNodeWrapper where T : Any {
+        return this .. JsonDataJsonArrayNodeWrapper.fromCollection(units.toList())
     }
 
     open fun data() = data
