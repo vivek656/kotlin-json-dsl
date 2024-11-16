@@ -12,8 +12,8 @@ how you create Json in Javascript
 
 in kotlin using Jackson 
 ```
-  val node = ObjectMapper.createObjectNode();
-  node.set("field" , TextNode("value");
+  val node = ObjectMapper.createObjectNode()
+  node.set("field" , TextNode("value"))
 ```
 
 with this library
