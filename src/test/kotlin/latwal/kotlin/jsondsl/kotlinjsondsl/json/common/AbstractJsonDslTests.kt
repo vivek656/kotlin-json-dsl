@@ -24,7 +24,7 @@ abstract class AbstractJsonDslTests {
 
     class NodeBuilderAssertionContext(private val jsonData: JsonDataJsonNodeWrapper) {
 
-        private val topLevelJson = jsonData.getValue()
+        private val topLevelJson = jsonData.getNode()
 
         fun isAnArray() = topLevelJson.isArray
         fun isAnObject() = topLevelJson.isObject

@@ -144,6 +144,18 @@ class BuilderTests : AbstractJsonDslTests() {
                 "totalResults" to 1_000_000
                 "resultsPerPage" to 5
             }
+            "nativeObjectField" to TestDataClass(
+                fieldOne = "myfield"
+            )
+            "arrayContruct" to arrayOf(
+                "k",
+                json {
+                    "json field" to "mismatch"
+                }
+            )
+            "array2" to arrayOf(
+                1,"2",3
+            )
             "items" to array {
                 plus {
                     "kind" to "youtube#searchResult"
@@ -221,7 +233,36 @@ class BuilderTests : AbstractJsonDslTests() {
 
     @Test
     fun simple(){
-        println()
+        val myJson = json {
+            "stringField" to "stringValue"
+            "intField" to 1
+            "booleanField" to true
+            "jsonField" to {
+                "myField" to "field"
+            }
+            "nativeObjectField" to TestDataClass(
+                fieldOne = "myfield"
+            )
+            "arrayConstruct" to arrayOf(
+                {
+                    "myField" to "1"
+                    "mycash" to 3
+                },
+                {
+                    "fieldOne" to 7
+                }
+            )
+            "arrayMe" to arrayOf(1,"2",3)
+        } asserting {
+            val jsonData = jsonData()
+            val node = jsonData.getNode()
+            val sf = jsonData.get("stringField")
+            val sfnode = sf?.getNode();
+            val arrayJson = jsonData.get("arrayConstruct")!!
+            val arrayAsNode = arrayJson.getNode()
+            val assArray = arrayJson.getArrayNode()
+            val string = jsonData.toString()
+        }
     }
 
 }

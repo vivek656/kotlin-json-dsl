@@ -46,7 +46,7 @@ open class JsonDataJsonNodeWrapper(jsonNode: JsonNode = serializer.createObjectN
                 }.getOrThrow()
     }
 
-    open fun getValue(): JsonNode = jsonNodeHolder.get(VALUE_KEY)
+    open fun getNode(): JsonNode = jsonNodeHolder.get(VALUE_KEY)
 
     fun get(key: String): JsonDataJsonNodeWrapper? {
         return getAsObject().get(key)?.let(::wrapAndGet)
@@ -60,13 +60,19 @@ open class JsonDataJsonNodeWrapper(jsonNode: JsonNode = serializer.createObjectN
 
     fun resolve(any: Any): JsonNode {
         return when (any) {
-            is JsonDataJsonArrayNodeWrapper -> any.getArray()
-            is JsonDataJsonNodeWrapper -> any.getValue()
+            is JsonDataJsonArrayNodeWrapper -> any.getArrayNode()
+            is JsonDataJsonNodeWrapper -> any.getNode()
             else -> serializer.convertValue(any, JsonNode::class.java)
         }
     }
 
-    override fun toString() = getValue().toString()
+    open fun getArrayNode() = getNode().let {
+        if(it.isArray) it
+        else throw UnsupportedOperationException("The Json data is not an Array. Cannot get ArrayNode")
+    }
+
+
+    override fun toString() = getNode().toString()
 
 }
 
@@ -90,19 +96,19 @@ class JsonDataJsonArrayNodeWrapper(jsonNode: ArrayNode = serializer.createArrayN
         jsonNodeHolder.set<ArrayNode>(VALUE_KEY, jsonNode)
     }
 
-    override fun getValue(): JsonNode = jsonNodeHolder.get(VALUE_KEY)
+    override fun getNode(): JsonNode = jsonNodeHolder.get(VALUE_KEY)
 
-    fun getArray() = getValue() as ArrayNode
+    override fun getArrayNode() = getNode() as ArrayNode
 
     fun get(indexedValue: Int): JsonDataJsonNodeWrapper? {
-        return getValue().get(indexedValue)?.let {
+        return getNode().get(indexedValue)?.let {
             wrapAndGet(it)
         }
     }
 
     fun set(indexedValue: Int, any: Any): JsonDataJsonNodeWrapper {
-        getArray()[indexedValue] = resolve(any)
-        return wrapAndGet(getArray()[indexedValue])
+        getArrayNode()[indexedValue] = resolve(any)
+        return wrapAndGet(getArrayNode()[indexedValue])
     }
 
     fun addAll(collections: Collection<*>) {
@@ -112,10 +118,10 @@ class JsonDataJsonArrayNodeWrapper(jsonNode: ArrayNode = serializer.createArrayN
     }
 
     fun add(any: Any) {
-        getArray().add(resolve(any))
+        getArrayNode().add(resolve(any))
     }
 
-    override fun toString() = getValue().toString()
+    override fun toString() = getNode().toString()
 
 }
 
@@ -137,7 +143,7 @@ class TypedJsonData<T : Any>(private val clazz: KClass<T> , objectAsJson : JsonD
         }
 
         fun <E : Any> from(clazz: KClass<E>, data : JsonDataJsonNodeWrapper): TypedJsonData<E> {
-            val json = serializer.convertValue(data.getValue(), JsonDataNode::class.java)
+            val json = serializer.convertValue(data.getNode(), JsonDataNode::class.java)
             val typedJson = TypedJsonData(clazz,json)
             return typedJson
         }

@@ -25,6 +25,10 @@ open class JsonObjectNodeContext(
         return this to JsonDataJsonArrayNodeWrapper.fromCollection(inits.map { json(it) })
     }
 
+    infix fun <T> String.to(units: Array<T>): JsonDataJsonNodeWrapper where T : Any {
+        return this to JsonDataJsonArrayNodeWrapper.fromCollection(units.toList())
+    }
+
     open fun data() = data
 }
 

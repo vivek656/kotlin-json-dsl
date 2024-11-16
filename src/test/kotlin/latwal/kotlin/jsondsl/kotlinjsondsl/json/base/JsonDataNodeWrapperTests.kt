@@ -65,8 +65,8 @@ class JsonDataNodeWrapperTests : AbstractJsonDslTests() {
         array.add(generateSimpleJsonData())
         array.addAll(jsonDataCollection)
 
-        assert(array.getArray().isArray)
-        assert(array.getArray().size() > jsonDataCollection.size)
+        assert(array.getArrayNode().isArray)
+        assert(array.getArrayNode().size() > jsonDataCollection.size)
 
         val stringifyData = array.toString()
         logInfo(TAG, stringifyData)
