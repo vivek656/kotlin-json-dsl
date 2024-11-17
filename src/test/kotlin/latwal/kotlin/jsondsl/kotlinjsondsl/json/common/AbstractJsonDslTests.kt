@@ -1,13 +1,15 @@
 package latwal.kotlin.jsondsl.kotlinjsondsl.json.common
 
 import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonDataJsonNodeWrapper
-import org.slf4j.LoggerFactory
+import org.junit.platform.commons.logging.LoggerFactory
+
+
 
 abstract class AbstractJsonDslTests {
 
     private val logger = LoggerFactory.getLogger(AbstractJsonDslTests::class.java)
     protected fun logInfo(tag : String , value : String){
-        logger.info("${tag}: ${value}")
+        logger.info { "${tag}: ${value}" }
     }
 
 
