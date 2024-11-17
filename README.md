@@ -1,5 +1,5 @@
 # kotlin-json-dsl
-koltin dsl for simple json operations
+koltin dsl for json operations
 
 This library provided DSL to create Json objects.
 
