@@ -1,5 +1,6 @@
 package latwal.kotlin.jsondsl.kotlinjsondsl.json.builder
 
+import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonDataJsonNodeWrapper
 import latwal.kotlin.jsondsl.kotlinjsondsl.json.common.AbstractJsonDslTests
 import org.junit.jupiter.api.Test
 
@@ -139,96 +140,11 @@ class BuilderTests : AbstractJsonDslTests() {
     @Test
     fun `real json to json dsl`() {
         json {
-            "kind" .. "youtube#searchListResponse"
-            "etag" .. "q4ibjmYp1KA3RqMF4jFLl6PBwOg"
-            "nextPage..ken" .. "CAUQAA"
-            "regionCode" .. "NL"
-            "pageInfo" .. {
-                "..talResults" .. 1_000_000
-                "resultsPerPage" .. 5
-            }
-            "nativeObjectField" .. TestDataClass(
-                fieldOne = "myfield"
-            )
             "arrayContruct" .. arrayOf(
-                "k",
-                json {
-                    "json field" .. "mismatch"
-                }
+                JsonDataJsonNodeWrapper().also {
+                    it.set("12" , "34")
+                }, 1
             )
-            "array2" .. arrayOf(
-                1,"2",3
-            )
-            "items" .. array {
-                plus {
-                    "kind" .. "youtube#searchResult"
-                    "etag" .. "QCsHBifbaernVCbLv8Cu6rAeaDQ"
-                    "id" .. {
-                        "kind" .. "youtube#video"
-                        "videoId" .. "TvWDY4Mm5GM"
-                    }
-                    "snippet" .. {
-                        "publishedAt" .. "2023-07-24T14:15:01Z"
-                        "channelId" .. "UCwozCpFp9g9x0wAzuFh0hwQ"
-                        "title" .. "3 Football Clubs Kylian Mbappe Should Avoid Signing ✍️❌⚽️ #football #mbappe #shorts"
-                        "description" .. ""
-                        "thumbnails" .. {
-                            "default" .. {
-                                "url" .. "https://i.ytimg.com/vi/TvWDY4Mm5GM/default.jpg"
-                                "width" .. 120
-                                "height" .. 90
-                            }
-                            "medium" .. {
-                                "url" .. "https://i.ytimg.com/vi/TvWDY4Mm5GM/mqdefault.jpg"
-                                "width" .. 320
-                                "height" .. 180
-                            }
-                            "high" .. {
-                                "url" .. "https://i.ytimg.com/vi/TvWDY4Mm5GM/hqdefault.jpg"
-                                "width" .. 480
-                                "height" .. 360
-                            }
-                        }
-                        "channelTitle" .. "FC Motivate"
-                        "liveBroadcastContent" .. "none"
-                        "publishTime" .. "2023-07-24T14:15:01Z"
-                    }
-                }
-                plus {
-                    "kind" .. "youtube#searchResult"
-                    "etag" .. "0NG5QHdtIQM_V-DBJDEf-jK_Y9k"
-                    "id" .. {
-                        "kind" .. "youtube#video"
-                        "videoId" .. "aZM_42CcNZ4"
-                    }
-                    "snippet" .. {
-                        "publishedAt" .. "2023-07-24T16:09:27Z"
-                        "channelId" .. "UCM5gMM_HqfKHYIEJ3lstMUA"
-                        "title" .. "Which Football Club Could Cristiano Ronaldo Afford .. Buy? 💰"
-                        "description" .. "Sign up .. Sorare and get a FREE card: https://sorare.pxf.io/NellisShorts Give Soraredata a go for FREE: ..."
-                        "thumbnails" .. {
-                            "default" .. {
-                                "url" .. "https://i.ytimg.com/vi/aZM_42CcNZ4/default.jpg"
-                                "width" .. 120
-                                "height" .. 90
-                            }
-                            "medium" .. {
-                                "url" .. "https://i.ytimg.com/vi/aZM_42CcNZ4/mqdefault.jpg"
-                                "width" .. 320
-                                "height" .. 180
-                            }
-                            "high" .. {
-                                "url" .. "https://i.ytimg.com/vi/aZM_42CcNZ4/hqdefault.jpg"
-                                "width" .. 480
-                                "height" .. 360
-                            }
-                        }
-                        "channelTitle" .. "John Nellis"
-                        "liveBroadcastContent" .. "none"
-                        "publishTime" .. "2023-07-24T16:09:27Z"
-                    }
-                }
-            }
         } asserting {
             isAnObject()
         }

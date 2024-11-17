@@ -1,5 +1,6 @@
 package latwal.kotlin.jsondsl.kotlinjsondsl.json.base
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -46,6 +47,7 @@ open class JsonDataJsonNodeWrapper(jsonNode: JsonNode = serializer.createObjectN
                 }.getOrThrow()
     }
 
+    @JsonIgnore
     open fun getNode(): JsonNode = jsonNodeHolder.get(VALUE_KEY)
 
     fun get(key: String): JsonDataJsonNodeWrapper? {
@@ -66,6 +68,7 @@ open class JsonDataJsonNodeWrapper(jsonNode: JsonNode = serializer.createObjectN
         }
     }
 
+    @JsonIgnore
     open fun getArrayNode() = getNode().let {
         if(it.isArray) it
         else throw UnsupportedOperationException("The Json data is not an Array. Cannot get ArrayNode")

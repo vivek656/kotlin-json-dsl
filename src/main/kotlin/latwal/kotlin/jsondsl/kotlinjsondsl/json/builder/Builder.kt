@@ -12,21 +12,21 @@ annotation class JsonBuilderDsl
 open class JsonObjectNodeContext(
         private val data: JsonDataJsonNodeWrapper = JsonDataJsonNodeWrapper.createInitialObjectNode()
 ) {
-//    -------------------
+////    -------------------
     infix operator fun String.rangeTo(value: Any): JsonDataJsonNodeWrapper {
         data.set(this, value)
         return data.get(this)!!
     }
 
-    infix fun String.rangeTo(init: @JsonBuilderDsl JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
+    infix operator fun String.rangeTo(init: @JsonBuilderDsl JsonObjectNodeContext.() -> Unit): JsonDataJsonNodeWrapper {
         return this .. json(init)
     }
 
-    infix fun String.rangeTo(inits: Array< @JsonBuilderDsl JsonObjectNodeContext.() -> Unit>): JsonDataJsonNodeWrapper {
+    infix operator fun String.rangeTo(inits: Array< @JsonBuilderDsl JsonObjectNodeContext.() -> Unit>): JsonDataJsonNodeWrapper {
         return this .. JsonDataJsonArrayNodeWrapper.fromCollection(inits.map { json(it) })
     }
 
-    infix fun <T> String.rangeTo(units: Array<T>): JsonDataJsonNodeWrapper where T : Any {
+    infix operator fun <T> String.rangeTo(units: Array<T>): JsonDataJsonNodeWrapper where T : Any {
         return this .. JsonDataJsonArrayNodeWrapper.fromCollection(units.toList())
     }
 
