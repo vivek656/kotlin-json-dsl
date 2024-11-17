@@ -1,6 +1,5 @@
 package latwal.kotlin.jsondsl.kotlinjsondsl.json.builder
 
-import latwal.kotlin.jsondsl.kotlinjsondsl.json.base.JsonDataJsonNodeWrapper
 import latwal.kotlin.jsondsl.kotlinjsondsl.json.common.AbstractJsonDslTests
 import org.junit.jupiter.api.Test
 
@@ -141,9 +140,15 @@ class BuilderTests : AbstractJsonDslTests() {
     fun `real json to json dsl`() {
         json {
             "arrayContruct" .. arrayOf(
-                JsonDataJsonNodeWrapper().also {
-                    it.set("12" , "34")
-                }, 1
+                json {
+                    "fieldOne" .. 1
+                    "field2" .. {
+                        "field3" .. arrayOf(
+                            1, 2 , "4"
+                        )
+                    }
+                } ,
+                "4"
             )
         } asserting {
             isAnObject()
