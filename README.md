@@ -25,6 +25,21 @@ json {
 
 see the repo's [wiki](https://github.com/vivek656/kotlin-json-dsl/wiki) and [tests](https://github.com/vivek656/kotlin-json-dsl/blob/main/src/test/kotlin/latwal/kotlin/jsondsl/kotlinjsondsl/json/builder/BuilderTests.kt) for more examples.
 
-We want contributors that want to extend the functionality of this library.
+## Installation
+Library is generally available to install via maven central.</br>
+if using maven as build tool use.
+```xml
+<dependency>
+    <groupId>io.github.vivek656</groupId>
+    <artifactId>kotlin-json-dsl</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
+if using other build tools like gradle, sbt or need jars to work with see the package page.
+[HERE](https://central.sonatype.com/artifact/io.github.vivek656/kotlin-json-dsl)
+
+
+#### We want contributors that want to extend the functionality of this library.
+
 If you think you can add more feature and fix some bugs lets connect on project [Discussions](https://github.com/vivek656/kotlin-json-dsl/discussions).
 Or you can directly email the contributors.

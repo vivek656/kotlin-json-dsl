@@ -12,7 +12,7 @@ annotation class JsonBuilderDsl
 open class JsonObjectNodeContext(
         private val data: JsonDataJsonNodeWrapper = JsonDataJsonNodeWrapper.createInitialObjectNode()
 ) {
-////    -------------------
+
     infix operator fun String.rangeTo(value: Any): JsonDataJsonNodeWrapper {
         data.set(this, value)
         return data.get(this)!!
